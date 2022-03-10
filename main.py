@@ -14,13 +14,13 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # CONNECT TO DB
 FILE_URI = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = FILE_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -80,11 +80,6 @@ class Comment(db.Model):
     post_id = Column(Integer, ForeignKey('blog_posts.id'))
     parent_post = relationship('BlogPost', back_populates='post_comments')
     comment = Column(Text, nullable=False)
-
-
-if not os.path.isfile(FILE_URI):
-    db.create_all()
-
 
 # DECORATORS #
 
